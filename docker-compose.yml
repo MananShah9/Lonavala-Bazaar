@@ -1,69 +1,30 @@
-version: '3.3'
-
+version: '3'
 services:
-  prestashop:
-    image: prestashop/prestashop:latest
-    container_name: prestashop
-    restart: always
-    ports:
-      - "8080:80"
-    networks:
-      - prestashop_net
-    environment:
-      DB_SERVER: db
-      DB_NAME: prestashop
-      DB_USER: ps_user
-      DB_PASSWORD: ps_pass
-      PS_INSTALL_AUTO: 1
-      PS_DOMAIN: ${DOMAIN}
-      PS_FOLDER_ADMIN: admin
-      PS_ENABLE_SSL: 0
-    volumes:
-      - prestashop_data:/var/www/html
-    depends_on:
-      - db
-
-  db:
+  mysql:
+    container_name: some-mysql
     image: mysql:5.7
-    container_name: mysql
-    restart: always
-    ports:
-      - "3306:3306"
-    networks:
-      - prestashop_net
+    restart: unless-stopped
     environment:
-      MYSQL_ROOT_PASSWORD: root123
+      MYSQL_ROOT_PASSWORD: SomeSuperStrongPW
       MYSQL_DATABASE: prestashop
-      MYSQL_USER: ps_user
-      MYSQL_PASSWORD: ps_pass
-    volumes:
-      - mysql_data:/var/lib/mysql
-
-  # nginx:
-  #   image: nginx:stable
-  #   container_name: nginx
-  #   restart: always
-  #   volumes:
-  #     - ./nginx/default.conf.template:/etc/nginx/templates/default.conf.template
-  #     - ./certbot/conf:/etc/letsencrypt
-  #     - ./certbot/www:/var/www/certbot
-  #   ports:
-  #     - "80:80"
-  #     - "443:443"
-  #   environment:
-  #     - DOMAIN=${DOMAIN}
-  #   depends_on:
-  #     - prestashop
-
-  # certbot:
-  #   image: certbot/certbot
-  #   volumes:
-  #     - ./certbot/conf:/etc/letsencrypt
-  #     - ./certbot/www:/var/www/certbot
-
-volumes:
-  mysql_data:
-  prestashop_data:
+    networks:
+      - prestashop_network
+  prestashop:
+    container_name: prestashop
+    image: prestashop/prestashop:latest
+    restart: unless-stopped
+    depends_on:
+      - mysql
+    ports:
+      - 80:80
+    environment:
+      DB_SERVER: some-mysql
+      DB_NAME: prestashop
+      DB_USER: root
+      DB_PASSWD: SomeSuperStrongPW
+      PS_INSTALL_AUTO: 1
+      PS_DOMAIN: lonavlabazaar.app:80
+    networks:
+      - prestashop_network
 networks:
-  prestashop_net:
-    driver: bridge
+    prestashop_network:
