@@ -22,8 +22,8 @@ services:
       DB_NAME: prestashop
       DB_USER: root
       DB_PASSWD: SomeSuperStrongPW
-      PS_INSTALL_AUTO: 1
-      PS_DOMAIN: lonavlabazaar.app:80
+      PS_INSTALL_AUTO: 0
+      PS_DOMAIN: lonavlabazaar.app
     networks:
       - prestashop_network
 networks:
