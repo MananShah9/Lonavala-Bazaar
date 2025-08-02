@@ -64,3 +64,6 @@ services:
 volumes:
   mysql_data:
   prestashop_data:
+networks:
+  prestashop_net:
+    driver: bridge
